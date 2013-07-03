@@ -3,11 +3,14 @@
 概述
 ========
 
-`FriendFeed<http://friendfeed.com/>`_ 使用了一款使用Python编写的, 相对简单的非阻塞式Web服务器. 其应用程序使用的Web框架看起来有些像`web.py <http://webpy.org/>`_ 或 Google的`webapp <http://code.google.com/appengine/docs/python/tools/webapp/>`_, 不过为了能利用非阻塞式Web服务器和工具，这个Web框架还包含了一些额外的工具和优化。
+`FriendFeed <http://friendfeed.com/>`_ 使用了一款使用Python编写的, 相对简单的非阻塞式Web服务器. 其应用程序使用的Web框架看起来有些像
+`web.py <http://webpy.org/>`_
+或 Google的
+`webapp <http://code.google.com/appengine/docs/python/tools/webapp/>`_ , 不过为了能利用非阻塞式Web服务器和工具，这个Web框架还包含了一些额外的工具和优化。
 
-`Tornado <https://github.com/facebook/tornado>`_ 就是这个Web服务器以及我们在FriendFeed中最常用使用的工具的开源版本. 这个框架和现在的主流Web服务器框架(包括大多数Python框架)有着明显的区别：因为它是非阻塞式的，并且速度相当快。因为它是非阻塞式的, 并且运用 `epoll
-<http://www.kernel.org/doc/man-pages/online/pages/man4/epoll.4.html>`_ 或kqueue, 它可以同时处理数千同时发生的标准连接, 这意味着这个框架对于实时的web服务是个理想的选择. 我们开发这个Web服务器的主要目的就是为了处理FriendFeed的实时特性 —— FriendFeed的每一个活动用户都会维持着一个与FriendFeed服务器的连接. (关于如何扩充服务器，以支持数以千计的客户端连接的更多信息，请参阅`The C10K problem
-<http://www.kegel.com/c10k.html>`_)
+`Tornado <https://github.com/facebook/tornado>`_ 就是这个Web服务器以及我们在FriendFeed中最常用使用的工具的开源版本. 这个框架和现在的主流Web服务器框架(包括大多数Python框架)有着明显的区别：因为它是非阻塞式的，并且速度相当快。因为它是非阻塞式的, 并且运用
+`epoll <http://www.kernel.org/doc/man-pages/online/pages/man4/epoll.4.html>`_ 或kqueue, 它可以同时处理数千同时发生的标准连接, 这意味着这个框架对于实时的web服务是个理想的选择. 我们开发这个Web服务器的主要目的就是为了处理FriendFeed的实时特性 —— FriendFeed的每一个活动用户都会维持着一个与FriendFeed服务器的连接. (关于如何扩充服务器，以支持数以千计的客户端连接的更多信息，请参阅
+`The C10K problem <http://www.kegel.com/c10k.html>`_ )
 
 下面是经典的 “Hello, world” 示例应用：
 
