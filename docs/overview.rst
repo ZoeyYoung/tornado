@@ -1,32 +1,15 @@
 .. currentmodule:: tornado.web
 
-Overview
+概述
 ========
 
-`FriendFeed's <http://friendfeed.com/>`_ web server is a relatively
-simple, non-blocking web server written in Python. The FriendFeed
-application is written using a web framework that looks a bit like
-`web.py <http://webpy.org/>`_ or Google's
-`webapp <http://code.google.com/appengine/docs/python/tools/webapp/>`_,
-but with additional tools and optimizations to take advantage of the
-non-blocking web server and tools.
+`FriendFeed<http://friendfeed.com/>`_ 使用了一款使用Python编写的, 相对简单的非阻塞式Web服务器. 其应用程序使用的Web框架看起来有些像`web.py <http://webpy.org/>`_ 或 Google的`webapp <http://code.google.com/appengine/docs/python/tools/webapp/>`_, 不过为了能利用非阻塞式Web服务器和工具，这个Web框架还包含了一些额外的工具和优化。
 
-`Tornado <https://github.com/facebook/tornado>`_ is an open source
-version of this web server and some of the tools we use most often at
-FriendFeed. The framework is distinct from most mainstream web server
-frameworks (and certainly most Python frameworks) because it is
-non-blocking and reasonably fast. Because it is non-blocking and uses
-`epoll
-<http://www.kernel.org/doc/man-pages/online/pages/man4/epoll.4.html>`_
-or kqueue, it can handle thousands of simultaneous standing
-connections, which means the framework is ideal for real-time web
-services. We built the web server specifically to handle FriendFeed's
-real-time features — every active user of FriendFeed maintains an open
-connection to the FriendFeed servers. (For more information on scaling
-servers to support thousands of clients, see `The C10K problem
-<http://www.kegel.com/c10k.html>`_.)
+`Tornado <https://github.com/facebook/tornado>`_ 就是这个Web服务器以及我们在FriendFeed中最常用使用的工具的开源版本. 这个框架和现在的主流Web服务器框架(包括大多数Python框架)有着明显的区别：因为它是非阻塞式的，并且速度相当快。因为它是非阻塞式的, 并且运用 `epoll
+<http://www.kernel.org/doc/man-pages/online/pages/man4/epoll.4.html>`_ 或kqueue, 它可以同时处理数千同时发生的标准连接, 这意味着这个框架对于实时的web服务是个理想的选择. 我们开发这个Web服务器的主要目的就是为了处理FriendFeed的实时特性 —— FriendFeed的每一个活动用户都会维持着一个与FriendFeed服务器的连接. (关于如何扩充服务器，以支持数以千计的客户端连接的更多信息，请参阅`The C10K problem
+<http://www.kegel.com/c10k.html>`_)
 
-Here is the canonical "Hello, world" example app:
+下面是经典的 “Hello, world” 示例应用：
 
 ::
 
@@ -45,11 +28,9 @@ Here is the canonical "Hello, world" example app:
         application.listen(8888)
         tornado.ioloop.IOLoop.instance().start()
 
-We attempted to clean up the code base to reduce interdependencies
-between modules, so you should (theoretically) be able to use any of the
-modules independently in your project without using the whole package.
+我们尝试清理代码库, 减少了各模块之间的相互依赖性, 所以(从理论上讲)你可以在自己的项目中独立地使用任何模块, 而不需要使用整个包.
 
-Request handlers and request arguments
+请求处理器(handlers)和请求参数(arguments)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A Tornado web application maps URLs or URL patterns to subclasses of
