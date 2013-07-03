@@ -33,14 +33,9 @@
 请求处理器(handlers)和请求参数(arguments)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A Tornado web application maps URLs or URL patterns to subclasses of
-`tornado.web.RequestHandler`. Those classes define ``get()`` or
-``post()`` methods to handle HTTP ``GET`` or ``POST`` requests to that
-URL.
+Tornado的Web应用程序会将URL或者URL范式映射到`tornado.web.RequestHandler`. 的子类上去. 在其子类中定义了 ``get()`` 或 ``post()`` 方法, 用以处理相应URL的HTTP ``GET`` 或 ``POST`` 请求.
 
-This code maps the root URL ``/`` to ``MainHandler`` and the URL pattern
-``/story/([0-9]+)`` to ``StoryHandler``. Regular expression groups are
-passed as arguments to the ``RequestHandler`` methods:
+下面的代码将根URL ``/`` 映射到 ``MainHandler``, 将一个URL范式 ``/story/([0-9]+)`` 映射到 ``StoryHandler``. 正则表达式匹配的分组(groups)会作为参数传递给相应的 ``RequestHandler`` 方法：
 
 ::
 
@@ -57,8 +52,7 @@ passed as arguments to the ``RequestHandler`` methods:
         (r"/story/([0-9]+)", StoryHandler),
     ])
 
-You can get query string arguments and parse ``POST`` bodies with the
-``get_argument()`` method:
+你可以使用 ``get_argument()`` 方法来获取查询字符串参数, 以及解析 ``POST`` 的主体部分(bodies)：
 
 ::
 
