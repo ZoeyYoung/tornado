@@ -70,59 +70,36 @@ Tornado的Web应用程序会将URL或者URL范式映射到`tornado.web.RequestHa
             self.set_header("Content-Type", "text/plain")
             self.write("You wrote " + self.get_argument("message"))
 
-Uploaded files are available in ``self.request.files``, which maps names
-(the name of the HTML ``<input type="file">`` element) to a list of
-files. Each file is a dictionary of the form
-``{"filename":..., "content_type":..., "body":...}``.
+上传的文件可以通过 ``self.request.files`` 访问到, 该对象将名称(HTML元素 ``<input type="file">`` 的 name 属性) 映射到一个文件列表. 每一个文件都以字典的形式存在, 其格式为 ``{"filename":..., "content_type":..., "body":...}``.
 
-If you want to send an error response to the client, e.g., 403
-Unauthorized, you can just raise a ``tornado.web.HTTPError`` exception:
+如果你想要返回一个错误信息给客户端, 例如 “403 Unauthorized”, 只需要抛出一个 ``tornado.web.HTTPError`` 异常：
 
 ::
 
     if not self.user_is_logged_in():
         raise tornado.web.HTTPError(403)
 
-The request handler can access the object representing the current
-request with ``self.request``. The ``HTTPRequest`` object includes a
-number of useful attributes, including:
+请求处理程序(request handler)可以通过 ``self.request`` 访问到代表当前请求的对象. 该 ``HTTPRequest`` 对象包含了一些有用的属性, 包括：
 
--  ``arguments`` - all of the ``GET`` and ``POST`` arguments
--  ``files`` - all of the uploaded files (via ``multipart/form-data``
-   POST requests)
--  ``path`` - the request path (everything before the ``?``)
--  ``headers`` - the request headers
+-  ``arguments`` - 所有的 ``GET`` 和 ``POST`` 参数
+-  ``files`` - 所有上传的文件(通过 ``multipart/form-data`` POST 请求)
+-  ``path`` - 请求的路径( ``?`` 之前的所有内容)
+-  ``headers`` - 请求的开头信息
 
-See the class definition for `tornado.httpserver.HTTPRequest` for a
-complete list of attributes.
+查看 `tornado.httpserver.HTTPRequest` 的类定义可以了解到所有属性.
 
-Overriding RequestHandler methods
+重写 RequestHandler 的方法
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In addition to ``get()``/``post()``/etc, certain other methods in
-``RequestHandler`` are designed to be overridden by subclasses when
-necessary. On every request, the following sequence of calls takes
-place:
+除了 ``get()``/``post()``/等 之外, ``RequestHandler`` 中的某些其它方法, 都是设计用于当必要时由子类重新定义的. 对于每个请求, 方法的调用次序如下：
 
-1. A new RequestHandler object is created on each request
-2. ``initialize()`` is called with keyword arguments from the
-   ``Application`` configuration. (the ``initialize`` method is new in
-   Tornado 1.1; in older versions subclasses would override ``__init__``
-   instead). ``initialize`` should typically just save the arguments
-   passed into member variables; it may not produce any output or call
-   methods like ``send_error``.
-3. ``prepare()`` is called. This is most useful in a base class shared
-   by all of your handler subclasses, as ``prepare`` is called no matter
-   which HTTP method is used. ``prepare`` may produce output; if it
-   calls ``finish`` (or ``send_error``, etc), processing stops here.
-4. One of the HTTP methods is called: ``get()``, ``post()``, ``put()``,
-   etc. If the URL regular expression contains capturing groups, they
-   are passed as arguments to this method.
-5. When the request is finished, ``on_finish()`` is called.  For synchronous
-   handlers this is immediately after ``get()`` (etc) return; for
-   asynchronous handlers it is after the call to ``finish()``.
+1. 程序为每一个请求创建一个新的 RequestHandler 对象
+2. ``initialize()`` 被调用, 参数是 ``Application`` 配置中的关键字参数(keyword arguments).( ``initialize`` 方法是 Tornado 1.1 中新添加的, 旧版本中子类需重写 ``__init__`` 以达到同样的目的). ``initialize`` 方法通常只是把传入的参数存到成员变量中; 它不应该产生任何输出或者调用像 ``send_error`` 之类的方法.
+3. ``prepare()``被调用. 由于无论使用哪种 HTTP 方法，``prepare`` 都会被调用到, 因此这个方法通常会被定义在一个由所有处理器子类(handler subclasses)共享的基类中. ``prepare`` 可以产生输出信息; 如果它调用了 ``finish`` (或 ``send_error``, 等方法), 那么整个处理流程就此结束.
+4. 某个 HTTP 方法被调用：``get()``, ``post()``, ``put()``, 等. 如果 URL 的正则表达式模式中有分组匹配, 那么相关匹配会作为参数传入方法.
+5. 当请求结束, ``on_finish()`` 被调用. 对于同步处理器, 当 ``get()`` (等) 请求返回时被调用; 对于异步处理器, 在调用 ``finish()`` 后被调用.
 
-Here is an example demonstrating the ``initialize()`` method:
+下面是一个示例, 演示 ``initialize()`` 方法:
 
 ::
 
@@ -137,18 +114,16 @@ Here is an example demonstrating the ``initialize()`` method:
         (r'/user/(.*)', ProfileHandler, dict(database=database)),
         ])
 
-Other methods designed for overriding include:
+其它设计用来被复写的方法有:
 
 -  ``write_error(self, status_code, exc_info=None, **kwargs)`` -
    outputs HTML for use on error pages.
--  ``get_current_user(self)`` - see `User
-   Authentication <#user-authentication>`_ below
--  ``get_user_locale(self)`` - returns ``locale`` object to use for the
-   current user
--  ``get_login_url(self)`` - returns login url to be used by the
-   ``@authenticated`` decorator (default is in ``Application`` settings)
--  ``get_template_path(self)`` - returns location of template files
-   (default is in ``Application`` settings)
+-  ``get_current_user(self)`` - 查看 `User
+   Authentication <#user-authentication>`_ 一节
+-  ``get_user_locale(self)`` - 返回 ``locale`` 对象, 以供当前用户使用
+-  ``get_login_url(self)`` - 返回登录url, 供``@authenticated`` 装饰器使用 (默认在 ``Application`` 的settings参数中设置)
+-  ``get_template_path(self)`` - 返回模板文件的路径
+   (默认在 ``Application`` 的settings参数中设置)
 -  ``set_default_headers(self)`` - may be used to set additional headers
    on the response (such as a custom ``Server`` header)
 
@@ -184,33 +159,25 @@ semantics for exceptions).  This method is still supported, but it is
 deprecated and applications are encouraged to switch to
 `RequestHandler.write_error`.
 
-Redirection
+重定向(Redirection)
 ~~~~~~~~~~~
 
-There are two main ways you can redirect requests in Tornado:
-``self.redirect`` and with the ``RedirectHandler``.
+Tornado 中重定向请求有两种主要方法: ``self.redirect``, 或者使用 ``RedirectHandler``.
 
-You can use ``self.redirect`` within a ``RequestHandler`` method (like
-``get``) to redirect users elsewhere. There is also an optional
-parameter ``permanent`` which you can use to indicate that the
-redirection is considered permanent.
+你可以在 ``RequestHandler`` 方法 (例如 ``get``) 中使用 ``self.redirect``, 将用户重定向到别的地方. 另外还有一个可选参数 ``permanent``, 你可以使用它来指定这次重定向是永久的.
 
-This triggers a ``301 Moved Permanently`` HTTP status, which is useful
-for e.g. redirecting to a canonical URL for a page in an SEO-friendly
-manner.
+该参数会激发一个 ``301 Moved Permanently`` HTTP 状态, 这在某些情况下是有用的, 例如, 你要将页面重定向到一个标准链接时, 这种方式会更有利于搜索引擎优化(SEO友好).(for e.g. redirecting to a canonical URL for a page in an SEO-friendly
+manner.)
 
-The default value of ``permanent`` is ``False``, which is apt for things
-like redirecting users on successful POST requests.
+``permanent`` 的默认值是 ``False``, 这是为了适用于常见的操作, 例如用户在成功发送 POST 请求 以后的重定向.
 
 ::
 
     self.redirect('/some-canonical-page', permanent=True)
 
-``RedirectHandler`` is available for your use when you initialize
-``Application``.
+``RedirectHandler`` 在你初始化 ``Application`` 后就获得.
 
-For example, notice how we redirect to a longer download URL on this
-website:
+例如, 注意在这个网站中我们是怎样重定向到一个较长的下载URL：
 
 ::
 
@@ -220,9 +187,7 @@ website:
          dict(url="https://github.com/downloads/facebook/tornado/tornado-0.2.tar.gz")),
     ], **settings)
 
-The default ``RedirectHandler`` status code is
-``301 Moved Permanently``, but to use ``302 Found`` instead, set
-``permanent`` to ``False``.
+``RedirectHandler`` 的默认状态码是 ``301 Moved Permanently``, 不过如果你想使用 ``302 Found`` 状态码, 你需要将 ``permanent`` 设置为 ``False``.
 
 ::
 
@@ -230,12 +195,7 @@ The default ``RedirectHandler`` status code is
         (r"/foo", tornado.web.RedirectHandler, {"url":"/bar", "permanent":False}),
     ], **settings)
 
-Note that the default value of ``permanent`` is different in
-``self.redirect`` than in ``RedirectHandler``. This should make some
-sense if you consider that ``self.redirect`` is used in your methods and
-is probably invoked by logic involving environment, authentication, or
-form submission, but ``RedirectHandler`` patterns are going to fire 100%
-of the time they match the request URL.
+注意, 在 ``self.redirect`` 和 ``RedirectHandler`` 中，``permanent`` 的默认值是不同的. 这样做是有一定道理的, ``self.redirect`` 通常会被用在自定义方法中, 是由逻辑事件触发(例如环境变更, 用户认证, 或表单提交). 而 ``RedirectHandler`` 模式在每次匹配到请求 URL 时100%被触发.
 
 Templates
 ~~~~~~~~~
