@@ -197,7 +197,7 @@ manner.)
 
 注意, 在 ``self.redirect`` 和 ``RedirectHandler`` 中，``permanent`` 的默认值是不同的. 这样做是有一定道理的, ``self.redirect`` 通常会被用在自定义方法中, 是由逻辑事件触发(例如环境变更, 用户认证, 或表单提交). 而 ``RedirectHandler`` 模式在每次匹配到请求 URL 时100%被触发.
 
-Templates
+模板(Templates)
 ~~~~~~~~~
 
 You can use any template language supported by Python, but Tornado ships
